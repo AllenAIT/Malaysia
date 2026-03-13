@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>馬來西亞 GE15 西馬選舉分析報告 2022</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ph: #E63946;
+    --pn: #2D6A4F;
+    --bn: #1D3557;
+    --gold: #C9963B;
+    --bg: #F8F5F0;
+    --text: #1a1a1a;
+    --subtext: #555;
+    --border: #E0D9CE;
+    --card: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* COVER */
+  .cover {
+    background: linear-gradient(135deg, #0D1B2A 0%, #1D3557 40%, #2D6A4F 100%);
+    color: white;
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(201,150,59,0.12);
+    pointer-events: none;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 200px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    pointer-events: none;
+  }
+
+  .cover-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .cover h1 {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    max-width: 700px;
+  }
+  .cover-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,0.72);
+    max-width: 560px;
+    margin-bottom: 40px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .cover-stat { border-left: 3px solid var(--gold); padding-left: 14px; }
+  .cover-stat .val { font-size: 28px; font-weight: 900; color: white; }
+  .cover-stat .lbl { font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+
+  /* MAIN */
+  .main { max-width: 1100px; margin: 0 auto; padding: 50px 30px 80px; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 50px 0 24px;
+  }
+  .section-num {
+    background: var(--text);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .section-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+    border-bottom: 3px solid var(--gold);
+    padding-bottom: 4px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--subtext);
+    margin-bottom: 18px;
+  }
+
+  /* GRID LAYOUTS */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+  @media (max-width: 780px) {
+    .grid-3, .grid-2, .grid-1-2, .grid-2-1 { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 28px; }
+    .cover { padding: 50px 24px 40px; }
+  }
+
+  /* KPI BADGES */
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 8px 0 0 8px;
+  }
+  .kpi.ph::before { background: var(--ph); }
+  .kpi.pn::before { background: var(--pn); }
+  .kpi.bn::before { background: var(--bn); }
+  .kpi.gold::before { background: var(--gold); }
+
+  .kpi .val {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi.ph .val { color: var(--ph); }
+  .kpi.pn .val { color: var(--pn); }
+  .kpi.bn .val { color: var(--bn); }
+  .kpi.gold .val { color: var(--gold); }
+
+  .kpi .lbl { font-size: 12px; color: var(--subtext); font-weight: 500; letter-spacing: 0.5px; }
+  .kpi .desc { font-size: 13px; color: #888; margin-top: 4px; }
+
+  /* CHART CONTAINERS */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .chart-wrap.pie { max-width: 300px; margin: 0 auto; }
+  .chart-wrap.bar { height: 280px; }
+  .chart-wrap.doughnut { max-width: 260px; margin: 0 auto; }
+
+  canvas { width: 100% !important; }
+
+  /* LEGEND */
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--subtext); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ANALYSIS TEXT */
+  .analysis-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 20px 0;
+  }
+  .analysis-block h3 {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .emoji { font-size: 20px; }
+  .analysis-block p { color: #444; font-size: 14.5px; line-height: 1.85; margin-bottom: 12px; }
+  .analysis-block p:last-child { margin-bottom: 0; }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    border-left: 4px solid var(--gold);
+    background: #FFF9EE;
+    padding: 16px 20px;
+    margin: 16px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    color: #5a4a1a;
+    font-weight: 500;
+  }
+
+  /* ETHNICITY TABLE */
+  .ethn-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ethn-table th {
+    background: #F0ECE4;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: var(--subtext);
+    border-bottom: 2px solid var(--border);
+  }
+  .ethn-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .ethn-table tr:last-child td { border-bottom: none; }
+  .ethn-table tr:hover td { background: #FAF7F2; }
+
+  .bar-cell { display: flex; align-items: center; gap: 8px; }
+  .bar-bg { height: 8px; background: #EEE; border-radius: 4px; flex: 1; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .pct-text { font-size: 12px; font-weight: 700; width: 36px; text-align: right; flex-shrink: 0; }
+
+  /* STATE TABLE */
+  .state-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .state-table th {
+    background: #0D1B2A;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .state-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .state-table tr:hover td { background: #FAF7F2; }
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .badge-ph { background: #FCEAEA; color: var(--ph); }
+  .badge-pn { background: #E4F2EC; color: #1a5e3b; }
+  .badge-bn { background: #E3ECF5; color: var(--bn); }
+  .badge-mix { background: #FFF0DE; color: #8B5E10; }
+
+  /* TURNOUT BARS */
+  .turnout-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+  }
+  .tb-label { width: 90px; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+  .tb-track { flex: 1; height: 20px; background: #EEE; border-radius: 4px; overflow: hidden; position: relative; }
+  .tb-fill { height: 100%; border-radius: 4px; }
+  .tb-pct { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 700; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .tb-num { width: 46px; font-size: 13px; font-weight: 700; flex-shrink: 0; text-align: right; }
+
+  /* FOOTER */
+  .footer {
+    background: #0D1B2A;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 28px 30px;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .footer strong { color: rgba(255,255,255,0.8); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 30px 0; }
+
+  /* PRINT STYLES */
+  @media print {
+    .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .kpi, .card, .analysis-block { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div>
+    <div class="cover-label">政治分析報告 · 2022年第十五屆全國大選</div>
+    <h1>西馬來西亞選舉<br>深度分析</h1>
+    <div class="cover-sub">涵蓋族群投票、投票率、政黨支持分布及州屬選情，聚焦半島馬來西亞165個國會選區</div>
+  </div>
+  <div class="cover-meta">
+    <div class="cover-stat">
+      <div class="val">2022.11.19</div>
+      <div class="lbl">投票日</div>
+    </div>
+    <div class="cover-stat">
+      <div class="val">165席</div>
+      <div class="lbl">西馬國會選區</div>
+    </div>
+    <div class="cover-stat">
+      <div class="val">74%</div>
+      <div class="lbl">全國整體投票率</div>
+    </div>
+    <div class="cover-stat">
+      <div class="val">懸峙國會</div>
+      <div class="lbl">首次歷史紀錄</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- SECTION 1: OVERVIEW -->
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <h2>整體選舉結果</h2>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="kpi ph">
+      <div class="val">82席</div>
+      <div class="lbl">希盟 PH ／ Pakatan Harapan</div>
+      <div class="desc">37% 得票率 · 最終組成政府</div>
+    </div>
+    <div class="kpi pn">
+      <div class="val">73席</div>
+      <div class="lbl">國盟 PN ／ Perikatan Nasional</div>
+      <div class="desc">30% 得票率 · 橫掃東海岸</div>
+    </div>
+    <div class="kpi bn">
+      <div class="val">30席</div>
+      <div class="lbl">國陣 BN ／ Barisan Nasional</div>
+      <div class="desc">22% 得票率 · 歷史性崩潰</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">全國席次分配（222席）</div>
+      <div class="chart-wrap pie">
+        <canvas id="seatsPie"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#E63946"></div>PH 82席</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F"></div>PN 73席</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1D3557"></div>BN 30席</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#C9963B"></div>GPS 23席</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#6B9FBF"></div>其他 14席</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">西馬席次分配（165席）</div>
+      <div class="chart-wrap pie">
+        <canvas id="westMalaysiaPie"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#E63946"></div>PH ~82席</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F"></div>PN ~59席</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1D3557"></div>BN ~24席</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:20px;">
+    ⚡ 歷史首次懸峙國會：三大聯盟均無法單獨取得過半的112席門檻。最終由希盟聯合國陣及砂拉越政黨聯盟（GPS）組成「團結政府」，由安華（Anwar Ibrahim）出任首相。PAS 以43席成為國會最大單一政黨，DAP 以40席緊隨其後。
+  </div>
+
+  <!-- SECTION 2: VOTER TURNOUT -->
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <h2>投票率分析</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">各族群投票率（半島，估算值）</div>
+      <div style="margin-top: 10px;">
+        <div class="turnout-bar">
+          <div class="tb-label">馬來裔</div>
+          <div class="tb-track">
+            <div class="tb-fill" style="width:78%;background:linear-gradient(90deg,#2D6A4F,#52B788);"></div>
+            <div class="tb-pct">78%</div>
+          </div>
+          <div class="tb-num" style="color:#2D6A4F">78%</div>
+        </div>
+        <div class="turnout-bar">
+          <div class="tb-label">印裔</div>
+          <div class="tb-track">
+            <div class="tb-fill" style="width:73%;background:linear-gradient(90deg,#C9963B,#E8B86D);"></div>
+            <div class="tb-pct">73%</div>
+          </div>
+          <div class="tb-num" style="color:#C9963B">73%</div>
+        </div>
+        <div class="turnout-bar">
+          <div class="tb-label">華裔</div>
+          <div class="tb-track">
+            <div class="tb-fill" style="width:68%;background:linear-gradient(90deg,#E63946,#FF6B6B);"></div>
+            <div class="tb-pct">68%</div>
+          </div>
+          <div class="tb-num" style="color:#E63946">68%</div>
+        </div>
+        <div class="turnout-bar">
+          <div class="tb-label">全國整體</div>
+          <div class="tb-track">
+            <div class="tb-fill" style="width:74%;background:linear-gradient(90deg,#555,#888);"></div>
+            <div class="tb-pct">74%</div>
+          </div>
+          <div class="tb-num" style="color:#555">74%</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:#999;margin-top:14px;">* 相較GE14（82.3%），各族群投票率均明顯下跌</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">GE14 vs GE15 投票率跌幅（各族群）</div>
+      <div class="chart-wrap bar">
+        <canvas id="turnoutDropBar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="analysis-block">
+    <h3><span class="emoji">📊</span> 投票率關鍵觀察</h3>
+    <p>GE15 整體投票率從 GE14 的 <strong>82.3% 大幅跌至 74%</strong>，約下降 8.3 個百分點。這與 Undi18 及自動選民登記制度的實施有關──新增選民中，許多人甚至不知道自己已被列入選民冊，因而未有投票。</p>
+    <p><strong>馬來裔</strong>是投票率跌幅最小的族群（約跌 6%），且馬來裔選民的高投票率明顯有利 PN。<strong>華裔</strong>跌幅最大（約 14%），削弱了希盟在部分競爭激烈選區的優勢。<strong>印裔</strong>跌幅約 9%，但在邊緣選區仍具關鍵決定作用。</p>
+    <p>按州屬分析，<strong>丁加奴</strong>（Terengganu）投票率最高（約 80%），<strong>吉蘭丹</strong>（Kelantan）最低（約 70.6%）。值得注意的是，高投票率州屬反而更有利 PN：在高於平均投票率的 95 個選區中，PN 拿下 47 席（49.5%），PH 僅 36 席（37.9%）。</p>
+  </div>
+
+  <!-- SECTION 3: ETHNIC VOTING -->
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <h2>族群投票行為分析</h2>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">🟢 馬來裔選票分布（估算）</div>
+      <div class="chart-wrap doughnut">
+        <canvas id="malayPie"></canvas>
+      </div>
+      <div class="legend" style="margin-top:14px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F"></div>PN 54%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1D3557"></div>BN 33%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#E63946"></div>PH 11%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#999"></div>其他 2%</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔴 華裔選票分布（估算）</div>
+      <div class="chart-wrap doughnut">
+        <canvas id="chinesePie"></canvas>
+      </div>
+      <div class="legend" style="margin-top:14px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#E63946"></div>PH 95%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1D3557"></div>BN 4%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F"></div>PN ~0%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#999"></div>其他 1%</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🟡 印裔選票分布（估算）</div>
+      <div class="chart-wrap doughnut">
+        <canvas id="indianPie"></canvas>
+      </div>
+      <div class="legend" style="margin-top:14px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#E63946"></div>PH 83%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1D3557"></div>BN 16%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F"></div>PN ~0%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#999"></div>其他 1%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETHNIC SUPPORT TABLE -->
+  <div class="card" style="margin-top:20px;">
+    <div class="card-title">各聯盟跨族群支持率對比表（半島馬來西亞估算）</div>
+    <table class="ethn-table">
+      <tr>
+        <th>族群</th>
+        <th>佔選民比例</th>
+        <th>希盟 PH</th>
+        <th>國盟 PN</th>
+        <th>國陣 BN</th>
+        <th>特點</th>
+      </tr>
+      <tr>
+        <td><strong>馬來裔</strong></td>
+        <td>~60%</td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:11%;background:#E63946;"></div></div>
+            <div class="pct-text" style="color:#E63946">11%</div>
+          </div>
+        </td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:54%;background:#2D6A4F;"></div></div>
+            <div class="pct-text" style="color:#2D6A4F">54%</div>
+          </div>
+        </td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:33%;background:#1D3557;"></div></div>
+            <div class="pct-text" style="color:#1D3557">33%</div>
+          </div>
+        </td>
+        <td style="font-size:12px;color:#666;">PN 為主要選擇；BN 流失約 10%</td>
+      </tr>
+      <tr>
+        <td><strong>華裔</strong></td>
+        <td>~23%</td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:95%;background:#E63946;"></div></div>
+            <div class="pct-text" style="color:#E63946">95%</div>
+          </div>
+        </td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:1%;background:#2D6A4F;"></div></div>
+            <div class="pct-text" style="color:#2D6A4F">~0%</div>
+          </div>
+        </td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:4%;background:#1D3557;"></div></div>
+            <div class="pct-text" style="color:#1D3557">4%</div>
+          </div>
+        </td>
+        <td style="font-size:12px;color:#666;">PH 歷史最高；PN 幾乎零支持</td>
+      </tr>
+      <tr>
+        <td><strong>印裔</strong></td>
+        <td>~7%</td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:83%;background:#E63946;"></div></div>
+            <div class="pct-text" style="color:#E63946">83%</div>
+          </div>
+        </td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:1%;background:#2D6A4F;"></div></div>
+            <div class="pct-text" style="color:#2D6A4F">~0%</div>
+          </div>
+        </td>
+        <td>
+          <div class="bar-cell">
+            <div class="bar-bg"><div class="bar-fill" style="width:16%;background:#1D3557;"></div></div>
+            <div class="pct-text" style="color:#1D3557">16%</div>
+          </div>
+        </td>
+        <td style="font-size:12px;color:#666;">擺動幅度最大；KL達 92%</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="grid-2" style="margin-top:20px;">
+    <div class="analysis-block">
+      <h3><span class="emoji">🟢</span> 馬來裔選民分析</h3>
+      <p>馬來裔是 GE15 中分裂最嚴重的族群。PN（以 PAS 為核心）成功搶下估計 <strong>54% 的馬來選票</strong>，較 GE14 中 PAS 獨立的 32% 大幅提升。BN 的馬來支持從 GE14 的 43% 跌至 33%，流失約 10 個百分點。</p>
+      <p>主要原因包括：BN 內部醜聞（前首相納吉貪腐案）、對 UMNO 主席扎希的強烈不滿，以及 PN 成功以「保護馬來人利益」的宗教民族主義敘事動員農村選民。</p>
+    </div>
+    <div class="analysis-block">
+      <h3><span class="emoji">🔴🟡</span> 非馬來裔選民分析</h3>
+      <p><strong>華裔</strong>對 PH 的支持達估計 95%，創歷史新高。PN 的族群排他言論與對華人文化機構的攻擊，導致幾乎零非馬來裔支持。然而華裔投票率下跌 14%，部分抵消了高支持率的優勢。</p>
+      <p><strong>印裔</strong>是擺動幅度最大的族群：支持 PH 的比例從霹靂州選的約 41% 大幅回升至全國約 83%，在 KL 更高達 92%。在多個邊緣選區，印裔選票成為左右勝負的關鍵力量。</p>
+    </div>
+  </div>
+
+  <!-- SECTION 4: STATE BY STATE -->
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <h2>各州選情分析</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-title">西馬各州勝選聯盟與分析</div>
+    <table class="state-table">
+      <tr>
+        <th>州屬</th>
+        <th>總席次</th>
+        <th>主導聯盟</th>
+        <th>投票率</th>
+        <th>主要族群組成</th>
+        <th>分析要點</th>
+      </tr>
+      <tr>
+        <td><strong>雪蘭莪</strong><br>Selangor</td>
+        <td>22席</td>
+        <td><span class="badge badge-ph">希盟 PH</span></td>
+        <td>~76%</td>
+        <td>混合（馬來、華、印）</td>
+        <td>PH 大本營；高度城市化，非馬來選民起決定性作用</td>
+      </tr>
+      <tr>
+        <td><strong>吉隆坡</strong><br>KL (WP)</td>
+        <td>11席</td>
+        <td><span class="badge badge-ph">希盟 PH</span></td>
+        <td>~77%</td>
+        <td>城市多族群</td>
+        <td>PH 全勝；華印裔選民高達 92%-84% 支持 PH</td>
+      </tr>
+      <tr>
+        <td><strong>檳城</strong><br>Penang</td>
+        <td>13席</td>
+        <td><span class="badge badge-ph">希盟 PH</span></td>
+        <td>~76%</td>
+        <td>華裔為主（約 42%）</td>
+        <td>DAP 票倉；印裔支持 PH 高達 87%</td>
+      </tr>
+      <tr>
+        <td><strong>霹靂</strong><br>Perak</td>
+        <td>24席</td>
+        <td><span class="badge badge-mix">競爭激烈</span></td>
+        <td>~73%（偏低）</td>
+        <td>馬來族佔多數</td>
+        <td>三方激烈角逐；安華親自在 Tambun 出戰；投票率偏低</td>
+      </tr>
+      <tr>
+        <td><strong>吉打</strong><br>Kedah</td>
+        <td>15席</td>
+        <td><span class="badge badge-pn">國盟 PN</span></td>
+        <td>~76%</td>
+        <td>馬來族佔絕大多數</td>
+        <td>「綠潮」核心；PN 幾乎全勝，PH 喪失大量 GE14 席次</td>
+      </tr>
+      <tr>
+        <td><strong>吉蘭丹</strong><br>Kelantan</td>
+        <td>14席</td>
+        <td><span class="badge badge-pn">國盟 PN</span></td>
+        <td>70.6%（最低）</td>
+        <td>馬來族（>90%）</td>
+        <td>PAS 傳統根據地；全勝；最低投票率</td>
+      </tr>
+      <tr>
+        <td><strong>丁加奴</strong><br>Terengganu</td>
+        <td>8席</td>
+        <td><span class="badge badge-pn">國盟 PN</span></td>
+        <td>80%（最高）</td>
+        <td>馬來族（>95%）</td>
+        <td>PAS 重鎮；全勝；投票率最高，反映高度動員</td>
+      </tr>
+      <tr>
+        <td><strong>柔佛</strong><br>Johor</td>
+        <td>26席</td>
+        <td><span class="badge badge-mix">競爭激烈</span></td>
+        <td>74.9%（偏低）</td>
+        <td>馬來、華裔</td>
+        <td>BN 傳統票倉；PH 與 BN 拉鋸；不少Johor人旅居新加坡影響投票率</td>
+      </tr>
+      <tr>
+        <td><strong>森美蘭</strong><br>Negeri Sembilan</td>
+        <td>8席</td>
+        <td><span class="badge badge-mix">混合</span></td>
+        <td>~75%</td>
+        <td>混合</td>
+        <td>BN 仍有一定基礎；PH 與 BN 各有斬獲</td>
+      </tr>
+      <tr>
+        <td><strong>彭亨</strong><br>Pahang</td>
+        <td>14席</td>
+        <td><span class="badge badge-pn">國盟 PN</span></td>
+        <td>~76%</td>
+        <td>馬來族為主</td>
+        <td>PN 主導；BN 仍保留若干席次</td>
+      </tr>
+      <tr>
+        <td><strong>馬六甲</strong><br>Melaka</td>
+        <td>6席</td>
+        <td><span class="badge badge-mix">競爭激烈</span></td>
+        <td>~76%</td>
+        <td>馬來族為主，有華印裔</td>
+        <td>BN 與 PH 拉鋸；印裔選票回歸 PH</td>
+      </tr>
+      <tr>
+        <td><strong>玻璃市</strong><br>Perlis</td>
+        <td>3席</td>
+        <td><span class="badge badge-pn">國盟 PN</span></td>
+        <td>~76%</td>
+        <td>馬來族（>80%）</td>
+        <td>PN 全勝；西北小州，馬來民族情緒強烈</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- SECTION 5: PARTY ANALYSIS -->
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <h2>主要政黨與聯盟深度分析</h2>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-title">各聯盟得票率比較（GE14 vs GE15）</div>
+    <div class="chart-wrap bar">
+      <canvas id="coalitionCompareBar"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="analysis-block">
+      <h3><span class="emoji">🔴</span> 希盟（PH）</h3>
+      <p><strong>核心政黨：</strong>DAP（40席）、PKR、Amanah</p>
+      <p><strong>族群基礎：</strong>華裔（95%）、印裔（83%）、城市馬來人（11%）</p>
+      <p><strong>地理分布：</strong>西海岸城市帶、雪蘭莪、檳城、KL</p>
+      <p><strong>強項：</strong>非馬來選票高度凝聚、城市中產選民、廉潔治理形象</p>
+      <p><strong>弱點：</strong>馬來選票嚴重流失；2018-2020年執政失敗留下陰影</p>
+    </div>
+    <div class="analysis-block">
+      <h3><span class="emoji">🟢</span> 國盟（PN）</h3>
+      <p><strong>核心政黨：</strong>PAS（43席，國會最大黨）、Bersatu</p>
+      <p><strong>族群基礎：</strong>馬來裔（54%）；非馬來裔幾乎零支持</p>
+      <p><strong>地理分布：</strong>東海岸（Kelantan、Terengganu）、西北（Kedah、Perlis）</p>
+      <p><strong>強項：</strong>宗教動員能力強、農村地區組織嚴密、資金充裕</p>
+      <p><strong>弱點：</strong>族群基礎極度單一，無法跨越族群鴻溝</p>
+    </div>
+    <div class="analysis-block">
+      <h3><span class="emoji">🔵</span> 國陣（BN）</h3>
+      <p><strong>核心政黨：</strong>UMNO（主力）、MCA、MIC</p>
+      <p><strong>族群基礎：</strong>馬來裔（33%）、印裔（16%）、華裔（4%）</p>
+      <p><strong>地理分布：</strong>柔佛、森美蘭、部分霹靂選區</p>
+      <p><strong>強項：</strong>仍有跨族群代表性；最終以盟友身份加入政府</p>
+      <p><strong>弱點：</strong>歷史性崩潰；納吉貪腐案陰影、馬來票大量流失至 PN</p>
+    </div>
+  </div>
+
+  <!-- SECTION 6: KEY INSIGHTS -->
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <h2>核心結構性分析</h2>
+  </div>
+
+  <div class="card" style="margin-bottom: 20px;">
+    <div class="card-title">「綠潮」現象：GE14 vs GE15 馬來選票流向</div>
+    <div class="chart-wrap bar">
+      <canvas id="malaySwingBar"></canvas>
+    </div>
+  </div>
+
+  <div class="analysis-block">
+    <h3><span class="emoji">🌊</span> 「綠潮」（Gelombang Hijau）——政治伊斯蘭的崛起</h3>
+    <p>GE15 最震撼的現象是 PN 席捲東海岸及西北州屬的「綠潮」。PAS 從 GE14 的 18 席一躍成為擁有 <strong>43 席的國會最大單一政黨</strong>。這不僅是對 PAS 傳統農村根據地的鞏固，更是向半島中部和西部城鎮的滲透擴張。</p>
+    <p>「綠潮」的成因涉及多個層面：COVID 疫情期間的社會援助政策深植人心、慕尤丁（Muhyiddin）政府的形象工程、以及 PN 專業而資金充裕的選舉機器。更深層的是，大量農村馬來年輕選民（受 Undi18 首次納入）對現有政治體制感到幻滅，轉向宗教民族主義尋找認同。</p>
+    <div class="highlight">
+      ⚠️ 結構性矛盾：GE15 出現馬來西亞歷史上最弔詭的政治局面——獲得最多馬來選票的聯盟（PN）在野，而馬來支持率最低的聯盟（PH）卻執政。這使「團結政府」的執政基礎在結構上相當脆弱。
+    </div>
+  </div>
+
+  <div class="analysis-block">
+    <h3><span class="emoji">🗳️</span> Undi18 與首投族：選舉生態的世代變革</h3>
+    <p>GE15 是馬來西亞首次實施投票年齡降至 18 歲（Undi18）及自動選民登記的全國選舉，合格選民人數從 GE14 的約 1,490 萬人暴增至 <strong>2,120 萬人</strong>，新增逾 600 萬名選民。</p>
+    <p>然而，這批新選民的投票行為分化明顯：<strong>年輕馬來選民</strong>對 PH 的「改革」口號共鳴有限，更被 PN 的穩定論述及網絡動員所吸引；<strong>年輕非馬來選民</strong>則普遍傾向 PH，但部分人對政治冷感而棄選。總體而言，Undi18 的加入在壓低投票率的同時，也為各黨派開拓了全新的動員戰場。</p>
+  </div>
+
+  <div class="analysis-block">
+    <h3><span class="emoji">🔮</span> 選後政治格局與未來展望</h3>
+    <p>「團結政府」（Unity Government）的組建是一次歷史性的政治結合——昔日死對頭 PH 與 BN 攜手執政。然而，此格局的本質是選後政治談判的結果，而非選民的直接授權，其長期穩定性存疑。</p>
+    <p>2023 年六個半島州屬（雪蘭莪、檳城、森美蘭、吉打、吉蘭丹、丁加奴）州選的結果，進一步鞏固了族群極化格局：<strong>PN 在馬來族主導州屬繼續稱霸，PH+BN 聯盟則守住城市西海岸</strong>。政治伊斯蘭的影響力似乎正在從「選舉現象」演變為馬來西亞政治的「新常態」，這是分析人士持續關注的核心議題。</p>
+  </div>
+
+  <!-- SECTION 7: SUMMARY TABLE -->
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <h2>關鍵數據速覽</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="kpi gold">
+      <div class="val">21.2M</div>
+      <div class="lbl">GE15 合格選民總數（全國）</div>
+      <div class="desc">較GE14新增逾600萬（Undi18效應）</div>
+    </div>
+    <div class="kpi ph">
+      <div class="val">PAS 43席</div>
+      <div class="lbl">國會最大單一政黨（破紀錄）</div>
+      <div class="desc">DAP 緊隨其後，40席</div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top:16px;">
+    <div class="kpi pn">
+      <div class="val">54%</div>
+      <div class="lbl">PN 馬來裔支持率（半島）</div>
+      <div class="desc">GE14 PAS僅32%，大幅提升</div>
+    </div>
+    <div class="kpi ph">
+      <div class="val">95%</div>
+      <div class="lbl">PH 華裔支持率（半島）</div>
+      <div class="desc">歷史新高，GE14為91%</div>
+    </div>
+    <div class="kpi gold">
+      <div class="val">83%</div>
+      <div class="lbl">PH 印裔支持率（半島）</div>
+      <div class="desc">較州選大幅反彈</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>資料來源</strong>：Bridget Welsh 族群投票分析系列（2023）・馬來西亞選舉委員會（SPR）官方結果・ISEAS-Yusof Ishak Institute（2023）・Merdeka Centre 民調・Fulcrum SG 分析<br>
+  本報告所有族群投票數據均為生態推斷估算值（ecological inference），源自投票站層級選民登記資料，並非個別選民調查。<br>
+  <strong>GE15 投票日：2022年11月19日</strong> ／ 報告編製：2026年3月
+</div>
+
+<script>
+// ── CHART.JS DEFAULTS ──
+Chart.defaults.font.family = "'Noto Sans TC', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.plugins.legend.display = false;
+
+const PIE_OPTS = (cutout = 0) => ({
+  type: cutout > 0 ? 'doughnut' : 'pie',
+  options: {
+    responsive: true,
+    cutout: cutout > 0 ? `${cutout}%` : undefined,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: ${ctx.parsed}%`
+        }
+      }
+    }
+  }
+});
+
+// 1. National seats pie
+new Chart(document.getElementById('seatsPie'), {
+  type: 'pie',
+  data: {
+    labels: ['PH 82席', 'PN 73席', 'BN 30席', 'GPS 23席', '其他 14席'],
+    datasets: [{
+      data: [82, 73, 30, 23, 14],
+      backgroundColor: ['#E63946', '#2D6A4F', '#1D3557', '#C9963B', '#8FAFCA'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}` } } } }
+});
+
+// 2. West Malaysia seats pie
+new Chart(document.getElementById('westMalaysiaPie'), {
+  type: 'pie',
+  data: {
+    labels: ['PH ~82席', 'PN ~59席', 'BN ~24席'],
+    datasets: [{
+      data: [82, 59, 24],
+      backgroundColor: ['#E63946', '#2D6A4F', '#1D3557'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}` } } } }
+});
+
+// 3. Malay vote doughnut
+new Chart(document.getElementById('malayPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['PN 54%', 'BN 33%', 'PH 11%', '其他 2%'],
+    datasets: [{
+      data: [54, 33, 11, 2],
+      backgroundColor: ['#2D6A4F', '#1D3557', '#E63946', '#AAAAAA'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: { responsive: true, cutout: '60%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}` } } } }
+});
+
+// 4. Chinese vote doughnut
+new Chart(document.getElementById('chinesePie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['PH 95%', 'BN 4%', 'PN ~0%', '其他 1%'],
+    datasets: [{
+      data: [95, 4, 0.5, 0.5],
+      backgroundColor: ['#E63946', '#1D3557', '#2D6A4F', '#AAAAAA'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: { responsive: true, cutout: '60%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}` } } } }
+});
+
+// 5. Indian vote doughnut
+new Chart(document.getElementById('indianPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['PH 83%', 'BN 16%', 'PN ~0%', '其他 1%'],
+    datasets: [{
+      data: [83, 16, 0.5, 0.5],
+      backgroundColor: ['#E63946', '#1D3557', '#2D6A4F', '#AAAAAA'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: { responsive: true, cutout: '60%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}` } } } }
+});
+
+// 6. Turnout drop bar
+new Chart(document.getElementById('turnoutDropBar'), {
+  type: 'bar',
+  data: {
+    labels: ['馬來裔', '印裔', '全國整體', '婆羅洲土著', '華裔'],
+    datasets: [{
+      label: '投票率跌幅 (%)',
+      data: [6, 9, 8.3, 13, 14],
+      backgroundColor: ['#52B788', '#C9963B', '#777', '#8FAFCA', '#E63946'],
+      borderRadius: 5,
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` 跌幅 ${ctx.parsed.x}%` } }
+    },
+    scales: {
+      x: {
+        grid: { color: '#F0ECE4' },
+        ticks: { callback: v => `-${v}%` },
+        title: { display: true, text: 'GE14→GE15 跌幅（百分點）' }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// 7. Coalition compare GE14 vs GE15
+new Chart(document.getElementById('coalitionCompareBar'), {
+  type: 'bar',
+  data: {
+    labels: ['希盟 PH', '國盟 PN', '國陣 BN'],
+    datasets: [
+      {
+        label: 'GE14 (2018) 得票率',
+        data: [49, 0, 32],
+        backgroundColor: 'rgba(100,150,200,0.6)',
+        borderColor: 'rgba(100,150,200,1)',
+        borderWidth: 1.5,
+        borderRadius: 4
+      },
+      {
+        label: 'GE15 (2022) 得票率',
+        data: [37, 30, 22],
+        backgroundColor: ['rgba(230,57,70,0.7)', 'rgba(45,106,79,0.7)', 'rgba(29,53,87,0.7)'],
+        borderColor: ['#E63946', '#2D6A4F', '#1D3557'],
+        borderWidth: 1.5,
+        borderRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'bottom', labels: { font: { size: 12 }, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+    },
+    scales: {
+      y: {
+        beginAtZero: true, max: 60,
+        grid: { color: '#F0ECE4' },
+        ticks: { callback: v => `${v}%` },
+        title: { display: true, text: '全國得票率 (%)' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 8. Malay vote swing bar
+new Chart(document.getElementById('malaySwingBar'), {
+  type: 'bar',
+  data: {
+    labels: ['希盟 PH', 'PN / PAS', '國陣 BN'],
+    datasets: [
+      {
+        label: 'GE14 (2018) 馬來選票',
+        data: [25, 32, 43],
+        backgroundColor: 'rgba(150,180,210,0.6)',
+        borderColor: 'rgba(100,140,180,1)',
+        borderWidth: 1.5,
+        borderRadius: 4
+      },
+      {
+        label: 'GE15 (2022) 馬來選票',
+        data: [11, 54, 33],
+        backgroundColor: ['rgba(230,57,70,0.75)', 'rgba(45,106,79,0.75)', 'rgba(29,53,87,0.75)'],
+        borderColor: ['#E63946', '#2D6A4F', '#1D3557'],
+        borderWidth: 1.5,
+        borderRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'bottom', labels: { font: { size: 12 }, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%（估算）` } }
+    },
+    scales: {
+      y: {
+        beginAtZero: true, max: 65,
+        grid: { color: '#F0ECE4' },
+        ticks: { callback: v => `${v}%` },
+        title: { display: true, text: '馬來裔選票佔比（估算）' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
